@@ -1,6 +1,7 @@
 const grid = document.querySelector('.grid')
 const width = 4
 const tiles = []
+const restartButton = document.querySelector('#restart')
 let cat = 0
 
 // ? Creating the grid.
@@ -43,6 +44,13 @@ function canMoveLeft (position, width) {
     return false
   }
 }
+
+// ? Reset/restart button
+restartButton.addEventListener('click', () => {
+  tiles[cat].classList.remove('cat')
+  cat = 0
+  tiles[cat].classList.add('cat')
+})
 
 // ? Moving the image/numbers with the arrows.
 document.addEventListener('keydown', (event) => {
