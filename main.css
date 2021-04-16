@@ -29,3 +29,8 @@ body {
   background-image: url("https://i.imgur.com/VQmEOXm.png");
   background-size: contain;
 }
+
+.dog {
+  background-image: url("https://i.imgur.com/UBdQwdd.jpg");
+  background-size: contain;
+}

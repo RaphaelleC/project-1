@@ -3,6 +3,7 @@ const width = 4
 const tiles = []
 const restartButton = document.querySelector('#restart')
 let cat = 0
+let dog = 0
 
 // ? Creating the grid.
 for (let index = 0; index < width ** 2; index++) {
@@ -48,8 +49,17 @@ function canMoveLeft (position, width) {
 // ? Reset/restart button
 restartButton.addEventListener('click', () => {
   tiles[cat].classList.remove('cat')
-  cat = 0
-  tiles[cat].classList.add('cat')
+  tiles[dog].classList.remove('dog')
+  cat = Math.floor(Math.random() * tiles.length)
+  dog = Math.floor(Math.random() * tiles.length)
+  if (cat !== dog) {
+    tiles[cat].classList.add('cat')
+    tiles[dog].classList.add('dog')
+  } else {
+    Math.abs(dog--)
+    tiles[cat].classList.add('cat')
+    tiles[dog].classList.add('dog')
+  }
 })
 
 // ? Moving the image/numbers with the arrows.
