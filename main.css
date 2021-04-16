@@ -1,0 +1,31 @@
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0
+}
+
+.grid {
+  display: flex;
+  flex-direction: row;
+  border: 5px solid grey;
+  width: 600px;
+  height: 600px;
+  flex-wrap: wrap;
+}
+
+.grid div {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 25%;
+  height: 25%;
+  border: 1px solid black;
+}
+
+.cat {
+  background-image: url("https://i.imgur.com/VQmEOXm.png");
+  background-size: contain;
+}
