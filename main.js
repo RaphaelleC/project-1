@@ -16,30 +16,30 @@ for (let index = 0; index < width ** 2; index++) {
 
 tiles[cat].classList.add('cat')
 
-// ? Checking if a movement is possible
+// ? Checking if a movement is possible (further direction and collision)
 function canMoveUp (position, width) {
-  if ((position - width) >= 0) {
+  if ((position - width) >= 0 && tiles[position - width].classList.length === 0) {
     return true
   } else {
     return false
   }
 }
 function canMoveRight (position, width) {
-  if ((position + 1) % width !== 0) {
+  if ((position + 1) % width !== 0 && tiles[position + 1].classList.length === 0) {
     return true
   } else {
     return false
   }
 }
 function canMoveDown (position, width) {
-  if ((position + width) < (width ** 2)) {
+  if ((position + width) < (width ** 2) && tiles[position + width].classList.length === 0) {
     return true
   } else {
     return false
   }
 }
 function canMoveLeft (position, width) {
-  if ((position) % width !== 0) {
+  if (position % width !== 0 && tiles[position - 1].classList.length === 0) {
     return true
   } else {
     return false
