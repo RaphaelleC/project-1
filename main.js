@@ -105,21 +105,32 @@ document.addEventListener('keydown', (event) => {
     for (let column = 0; column < width; column++) {
       for (let i = column; i < gridLength; i += width) {
         let index = i
-        while (tiles[index] !== 0 && canMoveUp(index, width)) {
-          tiles[index - width] = tiles[index]
+        let hasMerged = false
+        while (tiles[index] !== 0 && canMoveUp(index, width) && !hasMerged) {
+          if (tiles[index - width] === tiles[index]) {
+            tiles[index - width] *= 2
+            hasMerged = true
+          } else {
+            tiles[index - width] = tiles[index]
+          }
           tiles[index] = 0
           index -= width
           hasMoved = true
         }
       }
     }
-    
   } else if (key === 'ArrowRight') {
     for (let line = width - 1; line < gridLength; line += width) {
       for (let i = line; i > (line - width - 1); i--) {
         let index = i
-        while (tiles[index] !== 0 && canMoveRight(index, width)) {
-          tiles[index + 1] = tiles[index]
+        let hasMerged = false
+        while (tiles[index] !== 0 && canMoveRight(index, width) && !hasMerged) {
+          if (tiles[index + 1] === tiles[index]) {
+            tiles[index + 1] *= 2
+            hasMerged = true
+          } else {
+            tiles[index + 1] = tiles[index]
+          }
           tiles[index] = 0
           index++
           hasMoved = true
@@ -130,8 +141,14 @@ document.addEventListener('keydown', (event) => {
     for (let column = gridLength - width; column < gridLength; column++) {
       for (let i = column; i >= 0; i -= width) {
         let index = i
-        while (tiles[index] !== 0 && canMoveDown(index, width)) {
-          tiles[index + width] = tiles[index]
+        let hasMerged = false
+        while (tiles[index] !== 0 && canMoveDown(index, width) && !hasMerged) {
+          if (tiles[index + width] === tiles[index]) {
+            tiles[index + width] *= 2
+            hasMerged = true
+          } else {
+            tiles[index + width] = tiles[index]
+          }
           tiles[index] = 0
           index += width
           hasMoved = true
@@ -142,8 +159,14 @@ document.addEventListener('keydown', (event) => {
     for (let line = 0; line < gridLength; line += width) {
       for (let i = line; i < (line + width) ; i++) {
         let index = i
-        while (tiles[index] !== 0 && canMoveLeft(index, width)) {
-          tiles[index - 1] = tiles[index]
+        let hasMerged = false
+        while (tiles[index] !== 0 && canMoveLeft(index, width) && !hasMerged) {
+          if (tiles[index - 1] === tiles[index]) {
+            tiles[index - 1] *= 2
+            hasMerged = true
+          } else {
+            tiles[index - 1] = tiles[index]
+          }
           tiles[index] = 0
           index--
           hasMoved = true
@@ -152,7 +175,6 @@ document.addEventListener('keydown', (event) => {
     }
   }
   // ? Call function : Random tile appearing after movement is done.
-  console.log(hasMoved)
   if (hasMoved) {
     randomTileAppears()
   }
