@@ -42,7 +42,6 @@ function tilesValueToDomTiles () {
     }
   }
 }
-
 tilesValueToDomTiles()
 
 
@@ -52,67 +51,83 @@ restartButton.addEventListener('click', () => {
   tilesValueToDomTiles()
 })
 
-// domTiles[cat.position].classList.add('cat')
-
 // ? Checking if a movement is possible (further direction and collision)
-function canMoveUp (tile, width) {
-  if ((tile.position - width) >= 0 && domTiles[tile.position - width].classList.length === 0) {
+function canMoveUp (position, width) {
+  const targetPosition = position - width
+  if (targetPosition >= 0 && 
+      (tiles[targetPosition] === 0 || tiles[targetPosition] === tiles[position])) {
     return true
   } else {
     return false
   }
 }
-function canMoveRight (tile, width) {
-  if ((tile.position + 1) % width !== 0 && domTiles[tile.position + 1].classList.length === 0) {
+function canMoveRight (position, width) {
+  const targetPosition = position + 1
+  if (targetPosition % width !== 0 && 
+      (tiles[targetPosition] === 0 || tiles[targetPosition] === tiles[position])) {
     return true
   } else {
     return false
   }
 }
-function canMoveDown (tile, width) {
-  if ((tile.position + width) < (width ** 2) && domTiles[tile.position + width].classList.length === 0) {
+function canMoveDown (position, width) {
+  const targetPosition = position + width
+  if (targetPosition < (width ** 2) && 
+      (tiles[targetPosition] === 0 || tiles[targetPosition] === tiles[position])) {
     return true
   } else {
     return false
   }
 }
-function canMoveLeft (tile, width) {
-  if (tile.position % width !== 0 && domTiles[tile.position - 1].classList.length === 0) {
+function canMoveLeft (position, width) {
+  const targetPosition = position - 1
+  if (position % width !== 0 && 
+      (tiles[targetPosition] === 0 || tiles[targetPosition] === tiles[position])) {
     return true
   } else {
     return false
   }
 }
-
-
 
 // ? Moving the image/numbers with the arrows.
 document.addEventListener('keydown', (event) => {
   const key = event.key
-
   if (key === 'ArrowUp') {
-    while (canMoveUp(cat, width)) {
-      domTiles[cat.position].classList.remove('cat')
-      cat.position -= width
-      domTiles[cat.position].classList.add('cat')
-    }
+    tiles.forEach((tile, startIndex) => {
+      let index = startIndex
+      while (canMoveUp(index, width)) {
+        tiles[index - width] = tile
+        tiles[index] = 0
+        index -= width
+      }
+    })
   } else if (key === 'ArrowRight') {
-    while (canMoveRight(cat, width)) {
-      domTiles[cat.position].classList.remove('cat')
-      cat.position++
-      domTiles[cat.position].classList.add('cat')
-    }
-  } else  if (key === 'ArrowDown') {
-    while (canMoveDown(cat, width)) {
-      domTiles[cat.position].classList.remove('cat')
-      cat.position += width
-      domTiles[cat.position].classList.add('cat')
-    }
+    tiles.forEach((tile, startIndex) => {
+      let index = startIndex
+      while (canMoveRight(index, width)) {
+        tiles[index + 1] = tile
+        tiles[index] = 0
+        index++
+      }
+    })
+  } else if (key === 'ArrowDown') {
+    tiles.forEach((tile, startIndex) => {
+      let index = startIndex
+      while (canMoveDown(index, width)) {
+        tiles[index + width] = tile
+        tiles[index] = 0
+        index += width
+      }
+    })
   } else if (key === 'ArrowLeft') {
-    while (canMoveLeft(cat, width)) {
-      domTiles[cat.position].classList.remove('cat')
-      cat.position -= 1
-      domTiles[cat.position].classList.add('cat')
-    }
+    tiles.forEach((tile, startIndex) => {
+      let index = startIndex
+      while (canMoveLeft(index, width)) {
+        tiles[index - 1] = tile
+        tiles[index] = 0
+        index--
+      }
+    })
   }
+  tilesValueToDomTiles()
 })
