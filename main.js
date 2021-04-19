@@ -3,9 +3,6 @@ const width = 4
 const gridLength = width ** 2
 const domTiles = []
 const restartButton = document.querySelector('#restart')
-const cat = {
-  position: 0,
-}
 const tiles = []
 
 // ? Creating the grid.
@@ -44,12 +41,20 @@ function tilesValueToDomTiles () {
 }
 tilesValueToDomTiles()
 
-
 // ? Reset/restart button
 restartButton.addEventListener('click', () => {
   initialiseTiles()
   tilesValueToDomTiles()
 })
+
+// ? Random tile appearing after movement is done.
+function randomTileAppears () {
+  let random
+  do {
+    random = Math.floor(Math.random() * gridLength)
+  } while (tiles[random] > 0)
+  tiles[random] = 2
+}
 
 // ? Checking if a movement is possible (further direction and collision)
 function canMoveUp (position, width) {
@@ -61,6 +66,7 @@ function canMoveUp (position, width) {
     return false
   }
 }
+
 function canMoveRight (position, width) {
   const targetPosition = position + 1
   if (targetPosition % width !== 0 && 
@@ -92,42 +98,52 @@ function canMoveLeft (position, width) {
 // ? Moving the image/numbers with the arrows.
 document.addEventListener('keydown', (event) => {
   const key = event.key
+  let hasMoved = false
   if (key === 'ArrowUp') {
     tiles.forEach((tile, startIndex) => {
       let index = startIndex
-      while (canMoveUp(index, width)) {
+      while (tile !== 0 && canMoveUp(index, width)) {
         tiles[index - width] = tile
         tiles[index] = 0
         index -= width
+        hasMoved = true
       }
     })
   } else if (key === 'ArrowRight') {
     tiles.forEach((tile, startIndex) => {
       let index = startIndex
-      while (canMoveRight(index, width)) {
+      while (tile !== 0 && canMoveRight(index, width)) {
         tiles[index + 1] = tile
         tiles[index] = 0
         index++
+        hasMoved = true
       }
     })
   } else if (key === 'ArrowDown') {
     tiles.forEach((tile, startIndex) => {
       let index = startIndex
-      while (canMoveDown(index, width)) {
+      while (tile !== 0 && canMoveDown(index, width)) {
         tiles[index + width] = tile
         tiles[index] = 0
         index += width
+        hasMoved = true
       }
     })
   } else if (key === 'ArrowLeft') {
     tiles.forEach((tile, startIndex) => {
       let index = startIndex
-      while (canMoveLeft(index, width)) {
+      while (tile !== 0 && canMoveLeft(index, width)) {
         tiles[index - 1] = tile
         tiles[index] = 0
         index--
+        hasMoved = true
       }
     })
+  }
+  // ? Call function : Random tile appearing after movement is done.
+  console.log(hasMoved)
+  if (hasMoved) {
+    randomTileAppears()
   }
   tilesValueToDomTiles()
 })
