@@ -4,7 +4,7 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin: 0
+  margin: 0;
 }
 
 .grid {
@@ -23,14 +23,62 @@ body {
   width: 25%;
   height: 25%;
   border: 1px solid black;
+  font-size: 32px;
+  text-align: center;
+  vertical-align: middle;
 }
 
-.cat {
-  background-image: url("https://i.imgur.com/VQmEOXm.png");
+.tile-2 {
+  background-image: url();
   background-size: contain;
 }
 
-.dog {
-  background-image: url("https://i.imgur.com/UBdQwdd.jpg");
+.tile-4 {
+  background-image: url();
+  background-size: contain;
+}
+
+.tile-8 {
+  background-image: url();
+  background-size: contain;
+}
+
+.tile-16 {
+  background-image: url();
+  background-size: contain;
+}
+
+.tile-32 {
+  background-image: url();
+  background-size: contain;
+}
+
+.tile-64 {
+  background-image: url();
+  background-size: contain;
+}
+
+.tile-128 {
+  background-image: url();
+  background-size: contain;
+}
+
+.tile-256 {
+  background-image: url();
+  background-size: contain;
+}
+
+.tile-512 {
+  background-image: url();
+  background-size: contain;
+}
+
+.tile-1024 {
+  background-image: url();
+  background-size: contain;
+}
+
+.tile-2048 {
+  background-image: url();
   background-size: contain;
 }

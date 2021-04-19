@@ -10,7 +10,7 @@ for (let index = 0; index < width ** 2; index++) {
   const div = document.createElement('div')
   grid.appendChild(div)
   // To visualise the grid's numbers.
-  div.innerHTML = index
+  // div.innerHTML = index
   domTiles.push(div)
 }
 
@@ -34,8 +34,10 @@ function tilesValueToDomTiles () {
   for (let index = 0; index < gridLength; index++) {
     const domTile = domTiles[index]
     domTile.classList.remove(...domTile.classList)
-    if (tiles[index] === 2) {
-      domTile.classList.add('cat')
+    domTile.innerHTML = ''
+    if (tiles[index] > 0) {
+      domTile.classList.add('tile-' + tiles[index])
+      domTile.innerHTML = tiles[index]
     }
   }
 }
@@ -100,45 +102,54 @@ document.addEventListener('keydown', (event) => {
   const key = event.key
   let hasMoved = false
   if (key === 'ArrowUp') {
-    tiles.forEach((tile, startIndex) => {
-      let index = startIndex
-      while (tile !== 0 && canMoveUp(index, width)) {
-        tiles[index - width] = tile
-        tiles[index] = 0
-        index -= width
-        hasMoved = true
+    for (let column = 0; column < width; column++) {
+      for (let i = column; i < gridLength; i += width) {
+        let index = i
+        while (tiles[index] !== 0 && canMoveUp(index, width)) {
+          tiles[index - width] = tiles[index]
+          tiles[index] = 0
+          index -= width
+          hasMoved = true
+        }
       }
-    })
+    }
+    
   } else if (key === 'ArrowRight') {
-    tiles.forEach((tile, startIndex) => {
-      let index = startIndex
-      while (tile !== 0 && canMoveRight(index, width)) {
-        tiles[index + 1] = tile
-        tiles[index] = 0
-        index++
-        hasMoved = true
+    for (let line = width - 1; line < gridLength; line += width) {
+      for (let i = line; i > (line - width - 1); i--) {
+        let index = i
+        while (tiles[index] !== 0 && canMoveRight(index, width)) {
+          tiles[index + 1] = tiles[index]
+          tiles[index] = 0
+          index++
+          hasMoved = true
+        }
       }
-    })
+    }
   } else if (key === 'ArrowDown') {
-    tiles.forEach((tile, startIndex) => {
-      let index = startIndex
-      while (tile !== 0 && canMoveDown(index, width)) {
-        tiles[index + width] = tile
-        tiles[index] = 0
-        index += width
-        hasMoved = true
+    for (let column = gridLength - width; column < gridLength; column++) {
+      for (let i = column; i >= 0; i -= width) {
+        let index = i
+        while (tiles[index] !== 0 && canMoveDown(index, width)) {
+          tiles[index + width] = tiles[index]
+          tiles[index] = 0
+          index += width
+          hasMoved = true
+        }
       }
-    })
+    }
   } else if (key === 'ArrowLeft') {
-    tiles.forEach((tile, startIndex) => {
-      let index = startIndex
-      while (tile !== 0 && canMoveLeft(index, width)) {
-        tiles[index - 1] = tile
-        tiles[index] = 0
-        index--
-        hasMoved = true
+    for (let line = 0; line < gridLength; line += width) {
+      for (let i = line; i < (line + width) ; i++) {
+        let index = i
+        while (tiles[index] !== 0 && canMoveLeft(index, width)) {
+          tiles[index - 1] = tiles[index]
+          tiles[index] = 0
+          index--
+          hasMoved = true
+        }
       }
-    })
+    }
   }
   // ? Call function : Random tile appearing after movement is done.
   console.log(hasMoved)
