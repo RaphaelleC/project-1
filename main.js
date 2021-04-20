@@ -17,8 +17,9 @@ let leftBlocked = false
 for (let index = 0; index < width ** 2; index++) {
   const div = document.createElement('div')
   grid.appendChild(div)
-  // To visualise the grid's numbers.
-  // div.innerHTML = index
+  const divInDiv = document.createElement('div')
+  div.appendChild(divInDiv)
+  divInDiv.classList.add('numbers')
   domTiles.push(div)
 }
 
@@ -42,10 +43,10 @@ function tilesValueToDomTiles () {
   for (let index = 0; index < gridLength; index++) {
     const domTile = domTiles[index]
     domTile.classList.remove(...domTile.classList)
-    domTile.innerHTML = ''
+    domTile.firstChild.innerHTML = ''
     if (tiles[index] > 0) {
       domTile.classList.add('tile-' + tiles[index])
-      domTile.innerHTML = tiles[index]
+      domTile.firstChild.innerHTML = tiles[index]
     }
   }
   domScore.innerHTML = 'Score : ' + score
