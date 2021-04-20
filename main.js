@@ -4,6 +4,14 @@ const gridLength = width ** 2
 const domTiles = []
 const restartButton = document.querySelector('#restart')
 const tiles = []
+const domScore = document.querySelector('#score')
+let score = 0
+const domBestScore = document.querySelector('#best-score')
+let bestScore = 0
+let upBlocked = false
+let rightBlocked = false
+let downBlocked = false
+let leftBlocked = false
 
 // ? Creating the grid.
 for (let index = 0; index < width ** 2; index++) {
@@ -40,11 +48,17 @@ function tilesValueToDomTiles () {
       domTile.innerHTML = tiles[index]
     }
   }
+  domScore.innerHTML = 'Score : ' + score
+  domBestScore.innerHTML = 'Best score : ' + bestScore
 }
 tilesValueToDomTiles()
 
-// ? Reset/restart button
+// ? Restart button
 restartButton.addEventListener('click', () => {
+  if (score > bestScore) {
+    bestScore = score
+  }
+  score = 0
   initialiseTiles()
   tilesValueToDomTiles()
 })
@@ -68,7 +82,6 @@ function canMoveUp (position, width) {
     return false
   }
 }
-
 function canMoveRight (position, width) {
   const targetPosition = position + 1
   if (targetPosition % width !== 0 && 
@@ -97,7 +110,7 @@ function canMoveLeft (position, width) {
   }
 }
 
-// ? Moving the image/numbers with the arrows.
+// ? Moving the numbers with the arrows.
 document.addEventListener('keydown', (event) => {
   const key = event.key
   let hasMoved = false
@@ -109,6 +122,10 @@ document.addEventListener('keydown', (event) => {
         while (tiles[index] !== 0 && canMoveUp(index, width) && !hasMerged) {
           if (tiles[index - width] === tiles[index]) {
             tiles[index - width] *= 2
+            score += tiles[index - width]
+            if (score > bestScore) {
+              bestScore = score
+            }
             hasMerged = true
           } else {
             tiles[index - width] = tiles[index]
@@ -119,6 +136,9 @@ document.addEventListener('keydown', (event) => {
         }
       }
     }
+    if (!hasMoved) {
+      upBlocked = true
+    }
   } else if (key === 'ArrowRight') {
     for (let line = width - 1; line < gridLength; line += width) {
       for (let i = line; i > (line - width - 1); i--) {
@@ -127,6 +147,10 @@ document.addEventListener('keydown', (event) => {
         while (tiles[index] !== 0 && canMoveRight(index, width) && !hasMerged) {
           if (tiles[index + 1] === tiles[index]) {
             tiles[index + 1] *= 2
+            score += tiles[index + 1]
+            if (score > bestScore) {
+              bestScore = score
+            }
             hasMerged = true
           } else {
             tiles[index + 1] = tiles[index]
@@ -137,6 +161,9 @@ document.addEventListener('keydown', (event) => {
         }
       }
     }
+    if (!hasMoved) {
+      rightBlocked = true
+    }
   } else if (key === 'ArrowDown') {
     for (let column = gridLength - width; column < gridLength; column++) {
       for (let i = column; i >= 0; i -= width) {
@@ -145,6 +172,10 @@ document.addEventListener('keydown', (event) => {
         while (tiles[index] !== 0 && canMoveDown(index, width) && !hasMerged) {
           if (tiles[index + width] === tiles[index]) {
             tiles[index + width] *= 2
+            score += tiles[index + width]
+            if (score > bestScore) {
+              bestScore = score
+            }
             hasMerged = true
           } else {
             tiles[index + width] = tiles[index]
@@ -155,6 +186,9 @@ document.addEventListener('keydown', (event) => {
         }
       }
     }
+    if (!hasMoved) {
+      downBlocked = true
+    }
   } else if (key === 'ArrowLeft') {
     for (let line = 0; line < gridLength; line += width) {
       for (let i = line; i < (line + width) ; i++) {
@@ -163,6 +197,10 @@ document.addEventListener('keydown', (event) => {
         while (tiles[index] !== 0 && canMoveLeft(index, width) && !hasMerged) {
           if (tiles[index - 1] === tiles[index]) {
             tiles[index - 1] *= 2
+            score += tiles[index - 1]
+            if (score > bestScore) {
+              bestScore = score
+            }
             hasMerged = true
           } else {
             tiles[index - 1] = tiles[index]
@@ -173,10 +211,26 @@ document.addEventListener('keydown', (event) => {
         }
       }
     }
+    if (!hasMoved) {
+      leftBlocked = true
+    }
   }
   // ? Call function : Random tile appearing after movement is done.
   if (hasMoved) {
     randomTileAppears()
+    upBlocked = false
+    rightBlocked = false
+    downBlocked = false
+    leftBlocked = false
   }
   tilesValueToDomTiles()
+  const win = tiles.some((tile) => {
+    return tile === 2048
+  })
+  if (win) {
+    alert('You won !')
+  }
+  if (upBlocked && rightBlocked && downBlocked && leftBlocked) {
+    alert('Game over !')
+  }
 })
