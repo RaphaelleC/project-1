@@ -76,7 +76,7 @@ newGameButton.addEventListener('click', () => {
     bestScore = score
   }
   score = 0
-  winValue = 32
+  winValue = 2048
   initialiseTiles()
   tilesValueToDomTiles()
 })
@@ -90,6 +90,11 @@ continueButton.addEventListener('click', () => {
   tilesValueToDomTiles()
   continueButton.style.visibility = 'hidden'
 })
+
+function calculateScore (value) {
+  score += value
+  setAndSaveBestScore()
+}
 
 function setAndSaveBestScore () {
   if (score > bestScore) {
@@ -109,42 +114,57 @@ function randomTileAppears () {
   tiles[random] = 2
 }
 
-// ? Checking if a movement is possible (further direction and collision)
-function canMoveUp (position, width) {
-  const targetPosition = position - width
-  if (targetPosition >= 0 && tiles[position] > 0 &&
+function canMove (direction, position) {
+  let targetPosition = position
+  let isNotOnEdge = false
+  switch (direction) {
+    case 'up': {
+      targetPosition = position - width
+      isNotOnEdge = targetPosition >= 0
+      break
+    }
+    case 'right': {
+      targetPosition = position + 1
+      isNotOnEdge = targetPosition % width !== 0
+      break
+    }
+    case 'down': {
+      targetPosition = position + width
+      isNotOnEdge = targetPosition < (width ** 2)
+      break
+    }
+    case 'left': {
+      targetPosition = position - 1
+      isNotOnEdge = position % width !== 0
+      break
+    }
+    default:
+      break
+  }
+  if (isNotOnEdge && tiles[position] > 0 &&
       (tiles[targetPosition] === 0 || tiles[targetPosition] === tiles[position])) {
     return true
   } else {
     return false
   }
 }
-function canMoveRight (position, width) {
-  const targetPosition = position + 1
-  if (targetPosition % width !== 0 && tiles[position] > 0 &&
-      (tiles[targetPosition] === 0 || tiles[targetPosition] === tiles[position])) {
-    return true
-  } else {
-    return false
+
+function makeItMove (index, offset, direction) {
+  let hasMoved = false
+  let hasMerged = false
+  while (tiles[index] !== 0 && canMove(direction, index) && !hasMerged) {
+    if (tiles[index + offset] === tiles[index]) {
+      tiles[index + offset] *= 2
+      calculateScore(tiles[index + offset])
+      hasMerged = true
+    } else {
+      tiles[index + offset] = tiles[index]
+    }
+    tiles[index] = 0
+    index += offset
+    hasMoved = true
   }
-}
-function canMoveDown (position, width) {
-  const targetPosition = position + width
-  if (targetPosition < (width ** 2) && tiles[position] > 0 &&
-      (tiles[targetPosition] === 0 || tiles[targetPosition] === tiles[position])) {
-    return true
-  } else {
-    return false
-  }
-}
-function canMoveLeft (position, width) {
-  const targetPosition = position - 1
-  if (position % width !== 0 && tiles[position] > 0 &&
-      (tiles[targetPosition] === 0 || tiles[targetPosition] === tiles[position])) {
-    return true
-  } else {
-    return false
-  }
+  return hasMoved
 }
 
 // ? Moving the numbers with the arrows.
@@ -154,19 +174,7 @@ document.addEventListener('keydown', (event) => {
   if (key === 'ArrowUp' || key === 'w') {
     for (let column = 0; column < width; column++) {
       for (let i = column; i < gridLength; i += width) {
-        let index = i
-        let hasMerged = false
-        while (tiles[index] !== 0 && canMoveUp(index, width) && !hasMerged) {
-          if (tiles[index - width] === tiles[index]) {
-            tiles[index - width] *= 2
-            score += tiles[index - width]
-            setAndSaveBestScore()
-            hasMerged = true
-          } else {
-            tiles[index - width] = tiles[index]
-          }
-          tiles[index] = 0
-          index -= width
+        if (makeItMove(i, - width, 'up')) {
           hasMoved = true
         }
       }
@@ -177,19 +185,7 @@ document.addEventListener('keydown', (event) => {
   } else if (key === 'ArrowRight' || key === 'd') {
     for (let line = width - 1; line < gridLength; line += width) {
       for (let i = line; i > (line - width - 1); i--) {
-        let index = i
-        let hasMerged = false
-        while (tiles[index] !== 0 && canMoveRight(index, width) && !hasMerged) {
-          if (tiles[index + 1] === tiles[index]) {
-            tiles[index + 1] *= 2
-            score += tiles[index + 1]
-            setAndSaveBestScore()
-            hasMerged = true
-          } else {
-            tiles[index + 1] = tiles[index]
-          }
-          tiles[index] = 0
-          index++
+        if (makeItMove(i, 1, 'right')) {
           hasMoved = true
         }
       }
@@ -200,19 +196,7 @@ document.addEventListener('keydown', (event) => {
   } else if (key === 'ArrowDown' || key === 's') {
     for (let column = gridLength - width; column < gridLength; column++) {
       for (let i = column; i >= 0; i -= width) {
-        let index = i
-        let hasMerged = false
-        while (tiles[index] !== 0 && canMoveDown(index, width) && !hasMerged) {
-          if (tiles[index + width] === tiles[index]) {
-            tiles[index + width] *= 2
-            score += tiles[index + width]
-            setAndSaveBestScore()
-            hasMerged = true
-          } else {
-            tiles[index + width] = tiles[index]
-          }
-          tiles[index] = 0
-          index += width
+        if (makeItMove(i, width, 'down')) {
           hasMoved = true
         }
       }
@@ -223,19 +207,7 @@ document.addEventListener('keydown', (event) => {
   } else if (key === 'ArrowLeft' || key === 'a') {
     for (let line = 0; line < gridLength; line += width) {
       for (let i = line; i < (line + width) ; i++) {
-        let index = i
-        let hasMerged = false
-        while (tiles[index] !== 0 && canMoveLeft(index, width) && !hasMerged) {
-          if (tiles[index - 1] === tiles[index]) {
-            tiles[index - 1] *= 2
-            score += tiles[index - 1]
-            setAndSaveBestScore()
-            hasMerged = true
-          } else {
-            tiles[index - 1] = tiles[index]
-          }
-          tiles[index] = 0
-          index--
+        if (makeItMove(i, -1, 'left')) {
           hasMoved = true
         }
       }
