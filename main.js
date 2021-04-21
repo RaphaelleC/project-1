@@ -2,12 +2,14 @@ const grid = document.querySelector('.grid')
 const width = 4
 const gridLength = width ** 2
 const domTiles = []
-const restartButton = document.querySelector('#restart')
+const newGameButton = document.querySelector('#new-game')
+const continueButton = document.querySelector('#continue')
 const tiles = []
 const domScore = document.querySelector('#score')
 let score = 0
 const domBestScore = document.querySelector('#best-score')
 let bestScore = 0
+let winValue = 2048
 let upBlocked = false
 let rightBlocked = false
 let downBlocked = false
@@ -24,6 +26,7 @@ for (let index = 0; index < width ** 2; index++) {
 }
 
 function initialiseTiles () {
+  continueButton.style.visibility = 'hidden'
   const random1 = Math.floor(Math.random() * gridLength)
   let random2 = Math.floor(Math.random() * gridLength)
   if (random1 === random2) {
@@ -48,9 +51,18 @@ function tilesValueToDomTiles () {
     const domTile = domTiles[index]
     domTile.classList.remove(...domTile.classList)
     domTile.firstChild.innerHTML = ''
+    domTile.style.visibility = 'visible'
+    grid.classList.remove('victory', 'game-over')
     if (tiles[index] > 0) {
       domTile.classList.add('tile-' + tiles[index])
       domTile.firstChild.innerHTML = tiles[index]
+    } else if (tiles[index] === -1) {
+      domTile.style.visibility = 'hidden'
+      grid.classList.add('game-over')
+    } else if (tiles[index] < -1) {
+      domTile.style.visibility = 'hidden'
+      grid.classList.add('victory')
+      continueButton.style.visibility = 'visible'
     }
   }
   domScore.innerHTML = 'Score : ' + score
@@ -58,14 +70,25 @@ function tilesValueToDomTiles () {
 }
 tilesValueToDomTiles()
 
-// ? Restart button
-restartButton.addEventListener('click', () => {
+// ? New game button
+newGameButton.addEventListener('click', () => {
   if (score > bestScore) {
     bestScore = score
   }
   score = 0
+  winValue = 32
   initialiseTiles()
   tilesValueToDomTiles()
+})
+
+// ? Continue button
+continueButton.addEventListener('click', () => {
+  winValue = -3
+  for (let index = 0; index < tiles.length; index++) {
+    tiles[index] = tiles[index] * -1 - 2
+  }
+  tilesValueToDomTiles()
+  continueButton.style.visibility = 'hidden'
 })
 
 function setAndSaveBestScore () {
@@ -89,7 +112,7 @@ function randomTileAppears () {
 // ? Checking if a movement is possible (further direction and collision)
 function canMoveUp (position, width) {
   const targetPosition = position - width
-  if (targetPosition >= 0 && 
+  if (targetPosition >= 0 && tiles[position] > 0 &&
       (tiles[targetPosition] === 0 || tiles[targetPosition] === tiles[position])) {
     return true
   } else {
@@ -98,7 +121,7 @@ function canMoveUp (position, width) {
 }
 function canMoveRight (position, width) {
   const targetPosition = position + 1
-  if (targetPosition % width !== 0 && 
+  if (targetPosition % width !== 0 && tiles[position] > 0 &&
       (tiles[targetPosition] === 0 || tiles[targetPosition] === tiles[position])) {
     return true
   } else {
@@ -107,7 +130,7 @@ function canMoveRight (position, width) {
 }
 function canMoveDown (position, width) {
   const targetPosition = position + width
-  if (targetPosition < (width ** 2) && 
+  if (targetPosition < (width ** 2) && tiles[position] > 0 &&
       (tiles[targetPosition] === 0 || tiles[targetPosition] === tiles[position])) {
     return true
   } else {
@@ -116,7 +139,7 @@ function canMoveDown (position, width) {
 }
 function canMoveLeft (position, width) {
   const targetPosition = position - 1
-  if (position % width !== 0 && 
+  if (position % width !== 0 && tiles[position] > 0 &&
       (tiles[targetPosition] === 0 || tiles[targetPosition] === tiles[position])) {
     return true
   } else {
@@ -229,14 +252,16 @@ document.addEventListener('keydown', (event) => {
     downBlocked = false
     leftBlocked = false
   }
-  tilesValueToDomTiles()
   const win = tiles.some((tile) => {
-    return tile === 2048
+    return tile === winValue
   })
   if (win) {
-    alert('You won !')
+    for (let index = 0; index < tiles.length; index++) {
+      tiles[index] = tiles[index] * -1 - 2
+    }
   }
   if (upBlocked && rightBlocked && downBlocked && leftBlocked) {
-    alert('Game over !')
+    tiles.fill(-1)
   }
+  tilesValueToDomTiles()
 })
