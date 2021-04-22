@@ -1,32 +1,61 @@
 const grid = document.querySelector('.grid')
-const width = 4
-const gridLength = width ** 2
-const domTiles = []
 const newGameButton = document.querySelector('#new-game')
 const continueButton = document.querySelector('#continue')
-const tiles = []
 const domScore = document.querySelector('#score')
-let score = 0
 const domBestScore = document.querySelector('#best-score')
+
+const width = 4
+const gridLength = width ** 2
+const startingWinValue = 2048
+let winValue = startingWinValue
+
+const domTiles = []
+const tiles = []
+
+let score = 0
 let bestScore = 0
-let winValue = 2048
+
 let upBlocked = false
 let rightBlocked = false
 let downBlocked = false
 let leftBlocked = false
 
-// ? Creating the grid.
-for (let index = 0; index < width ** 2; index++) {
-  const div = document.createElement('div')
-  grid.appendChild(div)
-  const divInDiv = document.createElement('div')
-  div.appendChild(divInDiv)
-  divInDiv.classList.add('numbers')
-  domTiles.push(div)
+// ! Event listeners
+// ? New game button
+newGameButton.addEventListener('click', () => {
+  if (score > bestScore) {
+    bestScore = score
+  }
+  score = 0
+  winValue = startingWinValue
+  initialiseTiles()
+  tilesValueToDomTiles()
+  document.addEventListener('keydown', keyboardCallback)
+})
+// ? Continue button
+continueButton.addEventListener('click', () => {
+  winValue = -3
+  for (let index = 0; index < tiles.length; index++) {
+    tiles[index] = tiles[index] * -1 - 2
+  }
+  tilesValueToDomTiles()
+  document.addEventListener('keydown', keyboardCallback)
+  continueButton.style.visibility = 'hidden'
+})
+
+// ! Functions
+function twoOrFourTile (index) {
+  const random3 = Math.floor(Math.random() * gridLength)
+  if (random3 <= gridLength * 3 / 4) {
+    tiles[index] = 2
+  } else {
+    tiles[index] = 4
+  }
 }
 
 function initialiseTiles () {
   continueButton.style.visibility = 'hidden'
+  document.addEventListener('keydown', keyboardCallback)
   const random1 = Math.floor(Math.random() * gridLength)
   let random2 = Math.floor(Math.random() * gridLength)
   if (random1 === random2) {
@@ -34,16 +63,11 @@ function initialiseTiles () {
   }
   for (let index = 0; index < gridLength; index++){
     if (index === random1 || index === random2) {
-      tiles[index] = 2
+      twoOrFourTile(index)
     } else {
       tiles[index] = 0
     }
   }
-}
-initialiseTiles()
-
-if (localStorage) {
-  bestScore = localStorage.getItem('bestScore') || 0
 }
 
 function tilesValueToDomTiles () {
@@ -60,6 +84,7 @@ function tilesValueToDomTiles () {
       domTile.style.visibility = 'hidden'
       grid.classList.add('game-over')
     } else if (tiles[index] < -1) {
+      document.removeEventListener('keydown', keyboardCallback)
       domTile.style.visibility = 'hidden'
       grid.classList.add('victory')
       continueButton.style.visibility = 'visible'
@@ -68,28 +93,6 @@ function tilesValueToDomTiles () {
   domScore.innerHTML = 'Score : ' + score
   domBestScore.innerHTML = 'Best score : ' + bestScore
 }
-tilesValueToDomTiles()
-
-// ? New game button
-newGameButton.addEventListener('click', () => {
-  if (score > bestScore) {
-    bestScore = score
-  }
-  score = 0
-  winValue = 2048
-  initialiseTiles()
-  tilesValueToDomTiles()
-})
-
-// ? Continue button
-continueButton.addEventListener('click', () => {
-  winValue = -3
-  for (let index = 0; index < tiles.length; index++) {
-    tiles[index] = tiles[index] * -1 - 2
-  }
-  tilesValueToDomTiles()
-  continueButton.style.visibility = 'hidden'
-})
 
 function calculateScore (value) {
   score += value
@@ -105,13 +108,12 @@ function setAndSaveBestScore () {
   }
 }
 
-// ? Random tile appearing after movement is done.
 function randomTileAppears () {
   let random
   do {
     random = Math.floor(Math.random() * gridLength)
   } while (tiles[random] > 0)
-  tiles[random] = 2
+  twoOrFourTile(random)
 }
 
 function canMove (direction, position) {
@@ -167,8 +169,7 @@ function makeItMove (index, offset, direction) {
   return hasMoved
 }
 
-// ? Moving the numbers with the arrows.
-document.addEventListener('keydown', (event) => {
+function keyboardCallback (event) {
   const key = event.key
   let hasMoved = false
   if (key === 'ArrowUp' || key === 'w') {
@@ -216,7 +217,6 @@ document.addEventListener('keydown', (event) => {
       leftBlocked = true
     }
   }
-  // ? Call function : Random tile appearing after movement is done.
   if (hasMoved) {
     randomTileAppears()
     upBlocked = false
@@ -236,4 +236,22 @@ document.addEventListener('keydown', (event) => {
     tiles.fill(-1)
   }
   tilesValueToDomTiles()
-})
+}
+
+// ! Executed code
+// ? Creating the grid.
+for (let index = 0; index < width ** 2; index++) {
+  const div = document.createElement('div')
+  grid.appendChild(div)
+  const divInDiv = document.createElement('div')
+  div.appendChild(divInDiv)
+  divInDiv.classList.add('numbers')
+  domTiles.push(div)
+}
+
+if (localStorage) {
+  bestScore = localStorage.getItem('bestScore') || 0
+}
+
+initialiseTiles()
+tilesValueToDomTiles()
