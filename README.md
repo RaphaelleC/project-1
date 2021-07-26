@@ -1,7 +1,7 @@
 # Project-1 : 2048
 
 ## Overview
-This is my first project as a student of the Software Engineering Immersive course at GA, London. I had to create a grid-based game to be played in a browser using HTML, CSS and Javascript. It's a individual project that has been done within one week.
+This is my first project as a student of the Software Engineering Immersive course at GA, London. I had to create a grid-based game to be played in a browser using HTML, CSS and JavaScript. It's a individual project that has been done within one week.
 
 I had a list of different games I could chose from, and decided to go for the 2048. It's a game I really like and I was super enthusiastic to make my own version of it.
 
@@ -220,23 +220,20 @@ I used other variables to keep track of the game status :
 ***
 ![Game Over footage](/Screenshots/2048-loss.png)
 
-## Bugs
-There is a bug I didn't have time to solve. Despite the function `canMove` that verifies if a tile can move or not, when we have a line looking like this : |2|2|4| | and we want to make it move to the left, the result is |8| | | | instead of being : |4|4| | |. 
-
 ## Key learnings
-- Building and deployement of an app
-- Better understanding of HTML, CSS and JavaScript
-- Project planning
+- Building and deployment of an app : I have been able to put together the 3 languages I used in this app (HTML, CSS and JavaScript) to render my own version of the 2048.
+- Better understanding of HTML, CSS and JavaScript : I practiced a lot with these languages during this project and increased my skills with the styling and creating functionalities in an app.
+- Project planning : as it was my first project, I have learnt  the importance of planning up ahead to make sure the project goes on as smoothly as possible.
 
 ## Achievements
 - First app built as a solo project
 - First usage of the `switch` block
-- Deployement via GitHub
+- Deployment via GitHub
 
 ## Challenges
 
-The biggest challenged I've met on this project was to create the core concept of this grid game : adding numbers together. It's the part that took the most time to complete, and I'm really happy about the result.
-I also took some time at the end of the project to try and refactor my code, so that if I have to come back and take a look at it, it will be easier to understand and to remember which function serves whcoh purpose.
+The biggest challenge I've met on this project was to create the core concept of this grid game : adding numbers together. It's the part that took the most time to complete, and I'm really happy about the result.
+I also took some time at the end of the project to try and refactor my code, so that if I have to come back and take a look at it, it will be easier to understand and to remember which function serves which purpose.
 
 ## Potential features to add
 - Fix the merging bug
@@ -247,3 +244,6 @@ I also took some time at the end of the project to try and refactor my code, so 
 ## Credit
 Victory image : https://i.ytimg.com/vi/s8wHtQ23-vo/hqdefault.jpg  
 Loss image : https://pics.me.me/love-this-game-when-your-game-over-n-a-grumpy-13005592.png
+
+## Bugs
+There is a bug I didn't have time to solve. Despite the function `canMove` that verifies if a tile can move or not, when we have a line looking like this : |2|2|4| | and we want to make it move to the left, the result is |8| | | | instead of being : |4|4| | |. 
